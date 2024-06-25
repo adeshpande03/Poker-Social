@@ -1,20 +1,27 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Friends</title>
-</head>
-<body>
-    <h1>My Friends</h1>
-    <ul>
+  </head>
+  <body>
+    <main>
+      <h1>My Friends</h1>
+      <ul>
         {% for friend in friends %}
-            <li>{{ friend.username }} 
-                <a href="{{ url_for('main.remove_friend', user_id=friend.id) }}">Remove Friend</a> 
-                <a href="{{ url_for('main.block_user', user_id=friend.id) }}">Block User</a>
-            </li>
+        <li>
+          {{ friend.username }}
+          <a href="{{ url_for('main.remove_friend', user_id=friend.id) }}"
+            >Remove Friend</a
+          >
+          <a href="{{ url_for('main.block_user', user_id=friend.id) }}"
+            >Block User</a
+          >
+        </li>
         {% endfor %}
-    </ul>
-    <a href="{{ url_for('main.home') }}">Home</a>
-</body>
+      </ul>
+      <a href="{{ url_for('main.home') }}">Home</a>
+    </main>
+  </body>
 </html>

@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, shrink-to-fit=no"
+    />
+
+    <!--CSS -->
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/styles.css') }}"
+    />
+    <link
+      rel="icon"
+      href="{{ url_for('static', filename= 'img/tempIcon.png') }}"
+    />
+
+    <!--JavaScript -->
+    <script src="{{ url_for('static', filename='js/scripts.js') }}"></script>
+    <title>{% block title %} {% endblock %}</title>
+  </head>
+  <body>
+    <div class="wrapper">
+      <div class="content">
+        <nav class="navbar navbar-expand-lg navbar-light bg-light">
+          <a class="navbar-brand spotify-green" href="/">Poker Social</a>
+          <button
+            class="navbar-toggler"
+            type="button"
+            data-bs-toggle="collapse"
+            data-bs-target="#navbarNavAltMarkup"
+            aria-controls="navbarNavAltMarkup"
+            aria-expanded="false"
+            aria-label="Toggle navigation"
+          >
+            <span class="navbar-toggler-icon"></span>
+          </button>
+          <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+            <div class="navbar-nav">{% block menu_items %}{% endblock %}</div>
+          </div>
+        </nav>
+        <main class="container p-5">{% block main %}{% endblock %}</main>
+      </div>
+      <footer class="small text-center text-muted">
+        <ul>
+          <li>Akhil Deshpande</li>
+        </ul>
+      </footer>
+    </div>
+  </body>
+</html>

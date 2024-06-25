@@ -6,14 +6,16 @@
     <title>Login</title>
 </head>
 <body>
-    <h1>Login</h1>
-    <form method="POST" action="">
-        {{ form.hidden_tag() }}
-        {{ form.login.label }} {{ form.login }}<br>
-        {{ form.password.label }} {{ form.password }}<br>
-        {{ form.remember }} {{ form.remember.label }}<br>
-        {{ form.submit }}
-    </form>
-    <a href="{{ url_for('main.register') }}">Register</a>
+    <main>
+        <h1>Login</h1>
+        <form method="POST" action="">
+            {{ form.hidden_tag() }}
+            {{ form.login.label }} {{ form.login }}<br>
+            {{ form.password.label }} {{ form.password }}<br>
+            {{ form.remember }} {{ form.remember.label }}<br>
+            {{ form.submit }}
+        </form>
+        <a href="{{ url_for('main.register') }}">Register</a>
+    </main>
 </body>
 </html>

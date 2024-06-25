@@ -14,6 +14,9 @@ bp = Blueprint("main", __name__)
 def home():
     return render_template("home.html")
 
+@bp.route('/info')
+def info():
+    return render_template('info.html')
 
 @bp.route("/register", methods=["GET", "POST"])
 def register():
