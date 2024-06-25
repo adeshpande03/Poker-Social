@@ -15,8 +15,8 @@
       {% for user in users %}
       <li>
         {{ user.username }}
-        <a href="{{ url_for('main.add_friend', user_id=user.id) }}"
-          >Add Friend</a
+        <a href="{{ url_for('main.send_request', user_id=user.id) }}"
+          >Send Friend Request</a
         >
       </li>
       {% endfor %}
