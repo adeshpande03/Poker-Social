@@ -6,22 +6,37 @@
     <title>Friends</title>
   </head>
   <body>
-    <main>
-      <h1>My Friends</h1>
-      <ul>
-        {% for friend in friends %}
-        <li>
-          {{ friend.username }}
-          <a href="{{ url_for('main.remove_friend', user_id=friend.id) }}"
-            >Remove Friend</a
-          >
-          <a href="{{ url_for('main.block_user', user_id=friend.id) }}"
-            >Block User</a
-          >
-        </li>
-        {% endfor %}
-      </ul>
-      <a href="{{ url_for('main.home') }}">Home</a>
-    </main>
+    <h1>My Friends</h1>
+    <ul>
+      {% for friend in friends %}
+      <li>
+        {{ friend.username }}
+        <a href="{{ url_for('main.remove_friend', user_id=friend.id) }}"
+          >Remove Friend</a
+        >
+        <a href="{{ url_for('main.block_user', user_id=friend.id) }}"
+          >Block User</a
+        >
+        {% if friend in blocked_users %}
+        <a href="{{ url_for('main.unblock_user', user_id=friend.id) }}"
+          >Unblock User</a
+        >
+        {% endif %}
+      </li>
+      {% endfor %}
+    </ul>
+    <h2>Blocked Users</h2>
+    <ul>
+      {% for blocked_user in blocked_users %}
+      <li>
+        {{ blocked_user.blocked.username }}
+        <a
+          href="{{ url_for('main.unblock_user', user_id=blocked_user.blocked_user_id) }}"
+          >Unblock</a
+        >
+      </li>
+      {% endfor %}
+    </ul>
+    <a href="{{ url_for('main.home') }}">Home</a>
   </body>
 </html>

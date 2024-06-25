@@ -1,12 +1,4 @@
-{% extends 'base.html' %} {% block title %} Info {% endblock %} {% block
-menu_items %} {% if session.response_data %}
-<a class="nav-item nav-link" href="/">Home</a>
-<a class="nav-item nav-link active" href="/info">Info</a>
-<a class="nav-item nav-link" href="/logout">Logout</a>
-{% else %}
-<a class="nav-item nav-link" href="/">Home</a>
-<a class="nav-item nav-link active" href="/info">Info</a>
-<a class="nav-item nav-link" href="/login">Log In</a>
-{% endif %} {% endblock %} {% block main %}
+{% extends 'base.html' %} {% block main %}
 <h1>Info</h1>
-<p>This project is in development by Akhil Deshpande {% endblock %}</p>
+<p>This project is in development by Akhil Deshpande</p>
+{% endblock %}

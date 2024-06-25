@@ -14,9 +14,11 @@ bp = Blueprint("main", __name__)
 def home():
     return render_template("home.html")
 
-@bp.route('/info')
+
+@bp.route("/info")
 def info():
-    return render_template('info.html')
+    return render_template("info.html", title="Info")
+
 
 @bp.route("/register", methods=["GET", "POST"])
 def register():
@@ -154,7 +156,16 @@ def friends():
             friend_users.append(User.query.get(friendship.friend_id))
         else:
             friend_users.append(User.query.get(friendship.user_id))
-    return render_template("friends.html", title="Friends", friends=friend_users)
+
+    # Retrieve blocked users
+    blocked_users = BlockedUser.query.filter_by(user_id=current_user.id).all()
+
+    return render_template(
+        "friends.html",
+        title="Friends",
+        friends=friend_users,
+        blocked_users=blocked_users,
+    )
 
 
 @bp.route("/remove_friend/<int:user_id>")
@@ -193,4 +204,21 @@ def block_user(user_id):
         flash(f"User {user.username} has been blocked", "info")
     else:
         flash("User not found", "danger")
+    return redirect(url_for("main.friends"))
+
+
+@bp.route("/unblock_user/<int:user_id>")
+@login_required
+def unblock_user(user_id):
+    blocked_user = BlockedUser.query.filter_by(
+        user_id=current_user.id, blocked_user_id=user_id
+    ).first()
+    if blocked_user:
+        db.session.delete(blocked_user)
+        db.session.commit()
+        flash(
+            f"User {blocked_user.blocked_user_id} has been unblocked", "success"
+        )
+    else:
+        flash("User not found or not blocked", "danger")
     return redirect(url_for("main.friends"))
