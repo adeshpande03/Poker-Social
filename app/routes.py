@@ -70,7 +70,11 @@ def search():
     form = SearchForm()
     users = []
     if form.validate_on_submit():
-        users = User.query.filter(User.username.like(f"%{form.username.data}%")).all()
+        users = (
+            User.query.filter(User.username.like(f"%{form.username.data}%"))
+            .filter(User.id != current_user.id)
+            .all()
+        )
     return render_template("search.html", title="Search", form=form, users=users)
 
 
@@ -79,6 +83,22 @@ def search():
 def send_request(user_id):
     user = User.query.get(user_id)
     if user:
+        # Check if the user is already a friend
+        friendship = Friendship.query.filter(
+            (
+                (Friendship.user_id == current_user.id)
+                & (Friendship.friend_id == user_id)
+            )
+            | (
+                (Friendship.user_id == user_id)
+                & (Friendship.friend_id == current_user.id)
+            )
+        ).first()
+        if friendship:
+            flash(f"{user.username} is already your friend", "info")
+            return redirect(url_for("main.search"))
+
+        # Check if there is already a pending friend request
         existing_request = FriendRequest.query.filter_by(
             sender_id=current_user.id, receiver_id=user_id
         ).first()
@@ -216,9 +236,7 @@ def unblock_user(user_id):
     if blocked_user:
         db.session.delete(blocked_user)
         db.session.commit()
-        flash(
-            f"User {blocked_user.blocked_user_id} has been unblocked", "success"
-        )
+        flash(f"User {blocked_user.blocked_user_id} has been unblocked", "success")
     else:
         flash("User not found or not blocked", "danger")
     return redirect(url_for("main.friends"))
