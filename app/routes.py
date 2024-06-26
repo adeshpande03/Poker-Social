@@ -118,6 +118,17 @@ def send_request(user_id):
             flash(f"{user.username} is already your friend", "info")
             return redirect(url_for("main.search"))
 
+        # Check if the user has blocked the current user
+        blocked = BlockedUser.query.filter_by(
+            user_id=user.id, blocked_user_id=current_user.id
+        ).first()
+        if blocked:
+            flash(
+                f"You cannot send a friend request to {user.username} because they have blocked you.",
+                "danger",
+            )
+            return redirect(url_for("main.search"))
+
         # Check if there is already a pending friend request
         existing_request = FriendRequest.query.filter_by(
             sender_id=current_user.id, receiver_id=user_id
@@ -254,9 +265,10 @@ def unblock_user(user_id):
         user_id=current_user.id, blocked_user_id=user_id
     ).first()
     if blocked_user:
+        username = User.query.get(user_id).username
         db.session.delete(blocked_user)
         db.session.commit()
-        flash(f"User {blocked_user.blocked_user_id} has been unblocked", "success")
+        flash(f"User {username} has been unblocked", "success")
     else:
         flash("User not found or not blocked", "danger")
     return redirect(url_for("main.friends"))
