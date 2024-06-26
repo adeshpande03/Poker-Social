@@ -8,42 +8,4 @@
 </form>
 <div id="loginError" style="color: red"></div>
 <a href="{{ url_for('main.register') }}">Register</a>
-
-<script>
-  document
-    .getElementById("loginForm")
-    .addEventListener("submit", function (event) {
-      event.preventDefault();
-
-      const formData = new FormData(this);
-      const loginData = {
-        login: formData.get("{{ form.login.name }}"),
-        password: formData.get("{{ form.password.name }}"),
-        remember: formData.get("{{ form.remember.name }}") ? "y" : "n",
-        csrf_token: formData.get("csrf_token"),
-      };
-
-      fetch('{{ url_for("main.login") }}', {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Accept: "application/json",
-        },
-        body: JSON.stringify(loginData),
-      })
-        .then((response) => response.json())
-        .then((data) => {
-          if (data.status === "success") {
-            window.location.href = data.redirect_url;
-          } else {
-            const errorDiv = document.getElementById("loginError");
-            errorDiv.textContent = data.message;
-          }
-        })
-        .catch((error) => {
-          const errorDiv = document.getElementById("loginError");
-          errorDiv.textContent = "An error occurred. Please try again.";
-        });
-    });
-</script>
 {% endblock %}
