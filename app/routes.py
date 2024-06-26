@@ -23,7 +23,7 @@ def info():
 @bp.route("/register", methods=["GET", "POST"])
 def register():
     if current_user.is_authenticated:
-        return redirect(url_for("main.home"))
+        return {"status": "success", "redirect_url": url_for("main.home")}
     form = RegistrationForm()
     if form.validate_on_submit():
         hashed_password = bcrypt.generate_password_hash(form.password.data).decode(
@@ -34,15 +34,22 @@ def register():
         )
         db.session.add(user)
         db.session.commit()
-        flash("Your account has been created! You are now able to log in", "success")
-        return redirect(url_for("main.login"))
+        return {"status": "success", "redirect_url": url_for("main.login")}
+    elif request.method == "POST":
+        # Collect form errors
+        errors = form.errors
+        return {
+            "status": "error",
+            "message": "Registration failed",
+            "errors": errors,
+        }, 400
     return render_template("register.html", title="Register", form=form)
 
 
 @bp.route("/login", methods=["GET", "POST"])
 def login():
     if current_user.is_authenticated:
-        return redirect(url_for("main.home"))
+        return {"status": "success", "redirect_url": url_for("main.home")}
     form = LoginForm()
     if form.validate_on_submit():
         user = User.query.filter(
@@ -50,11 +57,12 @@ def login():
         ).first()
         if user and bcrypt.check_password_hash(user.password, form.password.data):
             login_user(user, remember=form.remember.data)
-            return redirect(url_for("main.home"))
+            return {"status": "success", "redirect_url": url_for("main.home")}
         else:
-            flash(
-                "Login Unsuccessful. Please check email/username and password", "danger"
-            )
+            return {
+                "status": "error",
+                "message": "Login Unsuccessful. Please check email/username and password",
+            }, 400
     return render_template("login.html", title="Login", form=form)
 
 
@@ -94,25 +102,6 @@ def send_request(user_id):
                 & (Friendship.friend_id == current_user.id)
             )
         ).first()
-        if friendship:
-            flash(f"{user.username} is already your friend", "info")
-            return redirect(url_for("main.search"))
-
-        # Check if there is already a pending friend request
-        existing_request = FriendRequest.query.filter_by(
-            sender_id=current_user.id, receiver_id=user_id
-        ).first()
-        if existing_request:
-            flash(f"You have already sent a friend request to {user.username}", "info")
-        else:
-            friend_request = FriendRequest(
-                sender_id=current_user.id, receiver_id=user_id
-            )
-            db.session.add(friend_request)
-            db.session.commit()
-            flash(f"Friend request sent to {user.username}!", "success")
-    else:
-        flash("User not found", "danger")
     return redirect(url_for("main.search"))
 
 
@@ -136,12 +125,6 @@ def accept_request(request_id):
         db.session.add(friendship)
         db.session.delete(friend_request)
         db.session.commit()
-        flash("Friend request accepted!", "success")
-    else:
-        flash(
-            "Friend request not found or you do not have permission to accept it",
-            "danger",
-        )
     return redirect(url_for("main.friend_requests"))
 
 
@@ -152,12 +135,6 @@ def reject_request(request_id):
     if friend_request and friend_request.receiver_id == current_user.id:
         db.session.delete(friend_request)
         db.session.commit()
-        flash("Friend request rejected", "info")
-    else:
-        flash(
-            "Friend request not found or you do not have permission to reject it",
-            "danger",
-        )
     return redirect(url_for("main.friend_requests"))
 
 
@@ -198,9 +175,6 @@ def remove_friend(user_id):
     if friendship:
         db.session.delete(friendship)
         db.session.commit()
-        flash("Friend removed", "info")
-    else:
-        flash("Friendship not found", "danger")
     return redirect(url_for("main.friends"))
 
 
@@ -221,9 +195,6 @@ def block_user(user_id):
         if friendship:
             db.session.delete(friendship)
             db.session.commit()
-        flash(f"User {user.username} has been blocked", "info")
-    else:
-        flash("User not found", "danger")
     return redirect(url_for("main.friends"))
 
 
@@ -236,7 +207,4 @@ def unblock_user(user_id):
     if blocked_user:
         db.session.delete(blocked_user)
         db.session.commit()
-        flash(f"User {blocked_user.blocked_user_id} has been unblocked", "success")
-    else:
-        flash("User not found or not blocked", "danger")
     return redirect(url_for("main.friends"))

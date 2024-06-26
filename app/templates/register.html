@@ -1,11 +1,54 @@
 {% extends 'base.html' %} {% block main %}
 <h1>Register</h1>
-<form method="POST" action="">
+<form id="registerForm" method="POST">
   {{ form.hidden_tag() }} {{ form.username.label }} {{ form.username }}<br />
   {{ form.email.label }} {{ form.email }}<br />
   {{ form.password.label }} {{ form.password }}<br />
   {{ form.confirm_password.label }} {{ form.confirm_password }}<br />
   {{ form.submit }}
 </form>
+<div id="registerError" style="color: red"></div>
 <a href="{{ url_for('main.login') }}">Login</a>
+
+<script>
+  document
+    .getElementById("registerForm")
+    .addEventListener("submit", function (event) {
+      event.preventDefault();
+
+      const formData = new FormData(this);
+      const registerData = {
+        username: formData.get("{{ form.username.name }}"),
+        email: formData.get("{{ form.email.name }}"),
+        password: formData.get("{{ form.password.name }}"),
+        confirm_password: formData.get("{{ form.confirm_password.name }}"),
+        csrf_token: formData.get("csrf_token"),
+      };
+
+      fetch('{{ url_for("main.register") }}', {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+        body: JSON.stringify(registerData),
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          if (data.status === "success") {
+            window.location.href = data.redirect_url;
+          } else {
+            const errorDiv = document.getElementById("registerError");
+            errorDiv.innerHTML = data.message + "<br>";
+            for (const [key, value] of Object.entries(data.errors)) {
+              errorDiv.innerHTML += `${key}: ${value}<br>`;
+            }
+          }
+        })
+        .catch((error) => {
+          const errorDiv = document.getElementById("registerError");
+          errorDiv.textContent = "An error occurred. Please try again.";
+        });
+    });
+</script>
 {% endblock %}
