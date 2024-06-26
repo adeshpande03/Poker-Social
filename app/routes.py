@@ -5,6 +5,7 @@ from app import db, bcrypt
 from app.forms import RegistrationForm, LoginForm, SearchForm
 from app.models import User, Friendship, FriendRequest, BlockedUser
 from flask_login import login_user, current_user, logout_user, login_required
+from flask import jsonify, request
 
 bp = Blueprint("main", __name__)
 
@@ -51,17 +52,29 @@ def login():
     if current_user.is_authenticated:
         return redirect(url_for("main.home"))
     form = LoginForm()
-    if form.validate_on_submit():
-        user = User.query.filter(
-            (User.email == form.login.data) | (User.username == form.login.data)
-        ).first()
-        if user and bcrypt.check_password_hash(user.password, form.password.data):
-            login_user(user, remember=form.remember.data)
-            return redirect(url_for("main.home"))
-        else:
-            flash(
-                "Login Unsuccessful. Please check email/username and password", "danger"
-            )
+    if request.method == "POST":
+        data = request.get_json()
+        if data:
+            login_data = data.get("login")
+            password = data.get("password")
+            user = User.query.filter(
+                (User.email == login_data) | (User.username == login_data)
+            ).first()
+            if user and bcrypt.check_password_hash(user.password, password):
+                login_user(user, remember=data.get("remember", False))
+                return jsonify(
+                    {"status": "success", "redirect_url": url_for("main.home")}
+                )
+            else:
+                return (
+                    jsonify(
+                        {
+                            "status": "error",
+                            "message": "Login Unsuccessful. Please check email/username and password",
+                        }
+                    ),
+                    400,
+                )
     return render_template("login.html", title="Login", form=form)
 
 

@@ -1,11 +1,56 @@
 {% extends 'base.html' %} {% block main %}
 <h1>Login</h1>
-<form id="loginForm" method="POST">
+<form id="loginForm">
   {{ form.hidden_tag() }} {{ form.login.label }} {{ form.login }}<br />
   {{ form.password.label }} {{ form.password }}<br />
   {{ form.remember }} {{ form.remember.label }}<br />
-  {{ form.submit }}
+  <button type="submit">Login</button>
 </form>
 <div id="loginError" style="color: red"></div>
 <a href="{{ url_for('main.register') }}">Register</a>
+
+<script>
+  document
+    .getElementById("loginForm")
+    .addEventListener("submit", function (event) {
+      event.preventDefault();
+
+      const formData = new FormData(this);
+      const loginData = {
+        login: formData.get("{{ form.login.name }}"),
+        password: formData.get("{{ form.password.name }}"),
+        remember: formData.get("{{ form.remember.name }}") ? true : false,
+      };
+
+      fetch('{{ url_for("main.login") }}', {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+        body: JSON.stringify(loginData),
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          if (data.status === "success") {
+            window.location.href = data.redirect_url;
+          } else {
+            const errorDiv = document.getElementById("loginError");
+            errorDiv.textContent = data.message;
+
+            // Clear the input fields
+            document.getElementById("{{ form.login.id }}").value = "";
+            document.getElementById("{{ form.password.id }}").value = "";
+          }
+        })
+        .catch((error) => {
+          const errorDiv = document.getElementById("loginError");
+          errorDiv.textContent = "An error occurred. Please try again.";
+
+          // Clear the input fields
+          document.getElementById("{{ form.login.id }}").value = "";
+          document.getElementById("{{ form.password.id }}").value = "";
+        });
+    });
+</script>
 {% endblock %}
