@@ -1,5 +1,6 @@
 {% extends 'base.html' %} {% block main %}
 <h1>Search for Friends</h1>
+<a href="{{ url_for('main.home') }}">Home</a>
 <form method="POST" action="">
   {{ form.hidden_tag() }} {{ form.username.label }} {{ form.username }}<br />
   {{ form.submit }}
@@ -14,5 +15,4 @@
   </li>
   {% endfor %}
 </ul>
-<a href="{{ url_for('main.home') }}">Home</a>
 {% endblock %}
