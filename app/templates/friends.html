@@ -5,12 +5,12 @@
   <li>
     {{ friend.username }}
     <a href="{{ url_for('main.remove_friend', user_id=friend.id) }}"
-      >Remove Friend</a
+      >Remove</a
     >
-    <a href="{{ url_for('main.block_user', user_id=friend.id) }}">Block User</a>
+    <a href="{{ url_for('main.block_user', user_id=friend.id) }}">Block</a>
     {% if friend in blocked_users %}
     <a href="{{ url_for('main.unblock_user', user_id=friend.id) }}"
-      >Unblock User</a
+      >Unblock</a
     >
     {% endif %}
   </li>

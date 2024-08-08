@@ -15,7 +15,15 @@
     />
     <link
       rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/css/bootstrap.min.css"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bulma@1.0.2/css/bulma.min.css"
     />
     <link
       rel="icon"
@@ -26,12 +34,17 @@
       rel="script"
       src="{{ url_for('static', filename='js/scripts.js') }}"
     ></script>
-    <script
+    <!-- <script
       rel="script"
       src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"
-    ></script>
+    ></script> -->
   </head>
   <body>
+    <nav class="styled-navbar">
+      <div class="navbar-brand">
+        <a class="navbar-item has-text-primary" href="/">Poker-Social</a>
+      </div>
+    </nav>
     <main>{% block main %}{% endblock %}</main>
     {% for message in get_flashed_messages() %}
     <div class="flash">

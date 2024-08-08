@@ -3,11 +3,17 @@
 <form id="loginForm">
   {{ form.hidden_tag() }} {{ form.login.label }} {{ form.login }}<br />
   {{ form.password.label }} {{ form.password }}<br />
-  {{ form.remember }} {{ form.remember.label }}<br />
-  <button type="submit">Login</button>
+  <div>{{ form.remember }} {{ form.remember.label }}</div>
+  <br />
+  <button class="button is-primary" type="submit">Login</button>
 </form>
 <div id="loginError" style="color: red"></div>
-<a href="{{ url_for('main.register') }}">Register</a>
+<a
+  style="margin-top: 1rem"
+  class="button is-danger"
+  href="{{ url_for('main.register') }}"
+  >Register</a
+>
 
 <script>
   document
